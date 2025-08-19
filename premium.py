@@ -1,9 +1,9 @@
-# main.py
+import os
 import telebot
 from telebot import types
 
 # === CONFIG ===
-BOT_TOKEN = "8243495375:AAHvEBd6lhs0AjZyOkniDPrQn60apIfvwu4"
+BOT_TOKEN = os.getenv("BOT_TOKEN")  # Secret orqali olinadi
 FORWARD_CHAT_ID = -1002538002919  # Guruh/kanal ID
 
 # === INIT ===
@@ -15,7 +15,7 @@ awaiting_receipt = set()
 # === MATNLAR ===
 WELCOME_TEXT = (
     "𝗔𝘀 𝘀𝗮𝗹𝗼𝗺𝘂 𝗮𝗹𝗲𝘆𝗸𝘂𝗺!\n"
-    "𝐏𝐫𝐞𝐦𝐢𝐮𝐦 𝐞𝐚𝐬𝐲  𝐛𝐨𝐭𝐢𝐦𝐢𝐳𝐠𝐚 𝐱𝐮𝐬𝐡 𝐤𝐞𝐥𝐢𝐛𝐬𝐢𝐳‼️"
+    "𝐏𝐫𝐞𝐦𝐢𝐮𝐦 𝐞𝐚𝐬𝐲 𝐛𝐨𝐭𝐢𝐦𝐢𝐳𝐠𝐚 𝐱𝐮𝐬𝐡 𝐤𝐞𝐥𝐢𝐛𝐬𝐢𝐳‼️"
 )
 
 PRICING_TEXT = (
@@ -74,23 +74,22 @@ def handle_photo(message: types.Message):
     if uid not in awaiting_receipt:
         return  # faqat tugmani bosganlardan qabul qilamiz
     try:
-        # Rasmning o'zini forward qilish
+        # Rasmni forward qilish
         bot.forward_message(
             chat_id=FORWARD_CHAT_ID,
             from_chat_id=message.chat.id,
             message_id=message.message_id
         )
-        # Foydalanuvchi ID sini alohida yuborish
+        # Foydalanuvchi ID sini yuborish
         bot.send_message(FORWARD_CHAT_ID, f"Chek yuborgan foydalanuvchi ID: {uid}")
     except Exception:
         bot.send_message(message.chat.id, "Xabarni yuborishda xatolik. Qayta urinib ko'ring.")
         return
     finally:
         awaiting_receipt.discard(uid)
-
     bot.reply_to(message, AFTER_FORWARD_REPLY)
 
-# Ba'zi foydalanuvchilar chekni 'document' qilib yuborishi mumkin (pdf/jpg)
+# Ba'zi foydalanuvchilar chekni 'document' qilib yuborishi mumkin
 @bot.message_handler(content_types=['document'])
 def handle_document(message: types.Message):
     uid = message.from_user.id
@@ -108,9 +107,8 @@ def handle_document(message: types.Message):
         return
     finally:
         awaiting_receipt.discard(uid)
-
     bot.reply_to(message, AFTER_FORWARD_REPLY)
 
 # === RUN ===
-if __name__ == "__main__":
+if name == "main":
     bot.infinity_polling(timeout=60, long_polling_timeout=60)
