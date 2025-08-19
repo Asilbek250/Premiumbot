@@ -1,0 +1,23 @@
+name: Telegram Bot
+
+on:
+  workflow_dispatch:
+  push:
+  schedule:
+    - cron: "0 */6 * * *"   # har 6 soatda qaytadan ishga tushadi
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run bot
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+        run: python premium.py
